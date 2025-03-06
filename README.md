@@ -13,7 +13,7 @@
 
 > "여기에 자신을 한 줄로 표현하는 문구를 넣으세요"
 
-안녕하세요! 저는 임동관관입니다. [간단한 자기소개를 2-3문장으로 작성하세요]
+안녕하세요! 저는 임동관입니다. [간단한 자기소개를 2-3문장으로 작성하세요]
 
 ### 🌟 핵심 역량
 - 💻 [주요 역량 1]
@@ -26,41 +26,11 @@
 
 <div align="center">
   <h3>💫 Languages</h3>
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" />
-  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white" />
+   <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <!-- 더 많은 언어 추가 가능 -->
   
-  <h3>🔥 Frontend</h3>
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" />
-  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" />
-  <img src="https://img.shields.io/badge/Vue.js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" />
-  <img src="https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" />
-  <!-- 더 많은 프론트엔드 기술 추가 가능 -->
-  
-  <h3>⚙️ Backend</h3>
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" />
-  <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" />
-  <img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white" />
-  <img src="https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white" />
-  <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white" />
-  <!-- 더 많은 백엔드 기술 추가 가능 -->
-  
-  <h3>🗄️ Database</h3>
-  <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" />
-  <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white" />
-  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
-  <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
-  <!-- 더 많은 데이터베이스 기술 추가 가능 -->
-  
   <h3>🔧 DevOps & Tools</h3>
-  <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
   <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
-  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" />
-  <img src="https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white" />
   <!-- 더 많은 도구 추가 가능 -->
 </div>
 
@@ -181,8 +151,8 @@
 ```mermaid
 timeline
     title 개발자 경력 & 학습 경로
-    2018 : 대학교 입학
-          : 컴퓨터공학 전공 시작
+    2025 : 네이버클라우드캠프 정보보안 3기
+          : AI/빅데이터를 활용한 사이버보안 위협 탐지기술 개발자 양성과정
     2019 : 첫 프로그래밍 대회 참가
           : 웹 개발 기초 학습 시작
     2020 : 첫 인턴십 경험
