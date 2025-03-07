@@ -1,6 +1,6 @@
 import socket    # 네트워크 소켓 통신을 위한 socket 모듈을 가져온다.
 import requests  # HTTP 요청을 보내기 위한 requests 모듈을 가져온.
-import re        # 정규표현식을 사용하기 위한 re 모듈을 가져온.
+import re        # 정규표현식을 사용하기 위한 re 모듈을 가져온다.
 
 # 내부 IP 확인을 위한 소켓 생성 (IPv4, TCP 사용)
 in_addr = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
