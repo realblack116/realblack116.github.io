@@ -1,4 +1,5 @@
 class1 숫자 맞추기 게임 만들기
+main1-1.py
 import random  # random 모듈을 불러와서 난수 생성 기능을 사용할 수 있게 한다.
 
 # 1부터 100 사이의 정수를 무작위로 선택하여 random_number 변수에 저장한다.
