@@ -124,96 +124,6 @@ class Calculator:
         """계산 기록 반환"""
         return self.history
 
-# 스타일 관련 함수
-def get_button_style(key):
-    """버튼 스타일 반환"""
-    styles = {
-        'number': {
-            'background-color': '#ffffff',
-            'color': '#333333',
-            'font-weight': 'normal',
-            'border': '1px solid #dddddd'
-        },
-        'operator': {
-            'background-color': '#f8f9fa',
-            'color': '#0366d6',
-            'font-weight': 'bold',
-            'border': '1px solid #dddddd'
-        },
-        'equals': {
-            'background-color': '#0366d6',
-            'color': 'white',
-            'font-weight': 'bold',
-            'border': '1px solid #0366d6'
-        },
-        'clear': {
-            'background-color': '#ff4b4b',
-            'color': 'white',
-            'font-weight': 'bold',
-            'border': '1px solid #ff4b4b'
-        },
-        'function': {
-            'background-color': '#f1f8ff',
-            'color': '#0366d6',
-            'font-weight': 'bold',
-            'border': '1px solid #dddddd'
-        }
-    }
-    
-    if key in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.']:
-        return styles['number']
-    elif key in ['+', '-', '×', '÷']:
-        return styles['operator']
-    elif key == '=':
-        return styles['equals']
-    elif key in ['C']:
-        return styles['clear']
-    else:
-        return styles['function']
-
-def create_styled_button(label, key, on_click_handler=None, args=None):
-    """스타일이 적용된 버튼 생성"""
-    style = get_button_style(key)
-    
-    html_button = f"""
-    <button 
-        style="
-            background-color: {style['background-color']};
-            color: {style['color']};
-            font-weight: {style['font-weight']};
-            border: {style['border']};
-            border-radius: 5px;
-            padding: 10px 0;
-            width: 100%;
-            font-size: 16px;
-            cursor: pointer;
-        "
-        class="calculator-button"
-        data-key="{key}"
-    >
-        {label}
-    </button>
-    """
-    
-    st.markdown(html_button, unsafe_allow_html=True)
-    
-    # JavaScript를 통한 클릭 이벤트 처리
-    st.markdown("""
-    <script>
-    const buttons = document.querySelectorAll('.calculator-button');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            const key = this.getAttribute('data-key');
-            // Streamlit에 메시지 전송
-            window.parent.postMessage({
-                type: 'calculator_input',
-                key: key
-            }, '*');
-        });
-    });
-    </script>
-    """, unsafe_allow_html=True)
-
 def main():
     st.set_page_config(
         page_title="객체지향 계산기",
@@ -285,95 +195,95 @@ def main():
     with col1:
         if st.button("C", use_container_width=True, key="clear"):
             st.session_state.calculator.process_input("C")
-            st.experimental_rerun()
+            st.rerun()  # Fixed: changed from experimental_rerun
     with col2:
         if st.button("x²", use_container_width=True, key="square"):
             st.session_state.calculator.process_input("x²")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col3:
         if st.button("√", use_container_width=True, key="sqrt"):
             st.session_state.calculator.process_input("√")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col4:
         if st.button("÷", use_container_width=True, key="divide"):
             st.session_state.calculator.process_input("/")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     
     # 버튼 행 2
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("7", use_container_width=True, key="7"):
             st.session_state.calculator.process_input(7)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col2:
         if st.button("8", use_container_width=True, key="8"):
             st.session_state.calculator.process_input(8)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col3:
         if st.button("9", use_container_width=True, key="9"):
             st.session_state.calculator.process_input(9)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col4:
         if st.button("×", use_container_width=True, key="multiply"):
             st.session_state.calculator.process_input("*")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     
     # 버튼 행 3
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("4", use_container_width=True, key="4"):
             st.session_state.calculator.process_input(4)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col2:
         if st.button("5", use_container_width=True, key="5"):
             st.session_state.calculator.process_input(5)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col3:
         if st.button("6", use_container_width=True, key="6"):
             st.session_state.calculator.process_input(6)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col4:
         if st.button("-", use_container_width=True, key="minus"):
             st.session_state.calculator.process_input("-")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     
     # 버튼 행 4
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("1", use_container_width=True, key="1"):
             st.session_state.calculator.process_input(1)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col2:
         if st.button("2", use_container_width=True, key="2"):
             st.session_state.calculator.process_input(2)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col3:
         if st.button("3", use_container_width=True, key="3"):
             st.session_state.calculator.process_input(3)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col4:
         if st.button("+", use_container_width=True, key="plus"):
             st.session_state.calculator.process_input("+")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     
     # 버튼 행 5
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("±", use_container_width=True, key="negate"):
             st.session_state.calculator.process_input("±")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col2:
         if st.button("0", use_container_width=True, key="0"):
             st.session_state.calculator.process_input(0)
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col3:
         if st.button(".", use_container_width=True, key="decimal"):
             st.session_state.calculator.process_input(".")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     with col4:
         if st.button("=", use_container_width=True, key="equals"):
             st.session_state.calculator.process_input("=")
-            st.experimental_rerun()
+            st.rerun()  # Fixed
     
     st.markdown('</div>', unsafe_allow_html=True)
     
