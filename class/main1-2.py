@@ -1,3 +1,4 @@
+### class1 숫자 맞추기 게임 만들기 ###
 main1-2.py
 import random  # 난수 생성을 위한 random 모듈을 불러온다.
 
@@ -27,7 +28,7 @@ while True:
     # 한 번의 시도가 끝날 때마다 시도 횟수를 1 증가한다.
     game_count = game_count + 1
 
-코드 설명
+### 코드 설명 ###
 1. 난수 생성:
 - random.randint(1, 100)를 사용해 1부터 100 사이의 임의의 정수를 생성한다.
 
