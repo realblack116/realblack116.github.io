@@ -45,7 +45,7 @@ while True:
     # 입력한 숫자가 random_number와 같으면 축하 메시지를 출력하고 루프를 종료한다.
     elif my_number == random_number:
         print(f"축하합니다. {game_count}회 만에 맞췄습니다")
-        break  # 정답을 맞췄으므로 반복문을 종료합니다.
+        break  # 정답을 맞췄으므로 반복문을 종료.
     
     # 한 번의 시도가 끝날 때마다 시도 횟수를 1 증가한다.
     game_count = game_count + 1
@@ -64,7 +64,7 @@ while True:
 - game_count 변수를 통해 사용자가 몇 번의 시도로 정답에 도달했는지를 기록다.
 
 main1-3.py
-import random  # 난수 생성 기능을 제공하는 random 모듈을 가져옵니다.
+import random  # 난수 생성 기능을 제공하는 random 모듈을 가져온다다.
 
 # 1부터 100 사이의 임의의 정수를 생성하여 random_number 변수에 저장한다.
 random_number = random.randint(1, 100)
@@ -94,7 +94,7 @@ while True:
         game_count = game_count + 1
         
     except:
-        # 숫자가 아닌 값 등을 입력하여 변환 오류가 발생하면 예외 처리하여 에러 메시지를 출력다.
+        # 숫자가 아닌 값 등을 입력하여 변환 오류가 발생하면 예외 처리하여 에러 메시지를 출력한다.
         print("에러가 발생하였습니다. 숫자를 입력하세요")
 
 코드 설명
