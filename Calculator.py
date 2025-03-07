@@ -1,335 +1,201 @@
 import streamlit as st
 import math
 
-class Calculator:
-    """기본 계산기 클래스"""
+# OOP 방식의 계산기 클래스
+class SimpleCalculator:
     def __init__(self):
-        self.reset()
-    
-    def reset(self):
-        self.current_input = ""
-        self.result = 0
-        self.operation = None
-        self.previous_operation = None
+        self.expression = ""
+        self.result = "0"
         self.history = []
-        self.just_calculated = False
+        self.replace_next = False
     
-    def process_digit(self, digit):
-        if self.just_calculated:
-            self.current_input = str(digit)
-            self.just_calculated = False
+    def append_value(self, value):
+        """숫자나 연산자를 표현식에 추가"""
+        if self.replace_next:
+            self.expression = str(value)
+            self.replace_next = False
         else:
-            self.current_input += str(digit)
-        return self.current_input if self.current_input else "0"
-    
-    def process_decimal(self):
-        if "." not in self.current_input:
-            if not self.current_input:
-                self.current_input = "0."
-            else:
-                self.current_input += "."
-        return self.current_input
-    
-    def clear_entry(self):
-        self.current_input = ""
-        return "0"
-    
-    def clear_all(self):
-        self.reset()
-        return "0"
-    
-    def backspace(self):
-        if self.current_input:
-            self.current_input = self.current_input[:-1]
-        return self.current_input if self.current_input else "0"
-    
-    def negate(self):
-        if self.current_input:
-            if self.current_input[0] == "-":
-                self.current_input = self.current_input[1:]
-            else:
-                self.current_input = "-" + self.current_input
-            return self.current_input
-        elif self.result != 0:
-            self.result = -self.result
-            return str(self.result)
-        return "0"
-    
-    def set_operation(self, op):
-        if self.current_input:
-            if self.operation and not self.just_calculated:
-                self.calculate()
-            else:
-                self.result = float(self.current_input)
-            self.operation = op
-            self.current_input = ""
-            self.just_calculated = False
-        elif self.result != 0:
-            self.operation = op
-        return str(self.result)
+            self.expression += str(value)
     
     def calculate(self):
-        if not self.current_input and not self.just_calculated:
-            return str(self.result)
-        
-        if not self.just_calculated:
-            current_value = float(self.current_input)
-            if self.operation == "+":
-                self.result += current_value
-                self.history.append(f"{self.result - current_value} + {current_value} = {self.result}")
-            elif self.operation == "-":
-                self.result -= current_value
-                self.history.append(f"{self.result + current_value} - {current_value} = {self.result}")
-            elif self.operation == "*":
-                self.result *= current_value
-                self.history.append(f"{self.result / current_value} × {current_value} = {self.result}")
-            elif self.operation == "/":
-                if current_value == 0:
-                    self.history.append(f"{self.result} ÷ 0 = Error")
-                    return "Error: Division by zero"
-                self.result /= current_value
-                self.history.append(f"{self.result * current_value} ÷ {current_value} = {self.result}")
-            else:
-                self.result = float(self.current_input)
-        
-        self.previous_operation = self.operation
-        self.operation = None
-        self.current_input = ""
-        self.just_calculated = True
-        
-        # 소수점 아래가 0인 경우 정수로 표시
-        if self.result == int(self.result):
-            return str(int(self.result))
-        return str(self.result)
-
-class ScientificCalculator(Calculator):
-    """공학용 계산기 클래스"""
-    def square(self):
-        if self.current_input:
-            value = float(self.current_input)
-            result = value ** 2
-            self.history.append(f"{value}² = {result}")
-            self.result = result
-        else:
-            self.result = self.result ** 2
-            self.history.append(f"{self.result / self.result ** 0.5}² = {self.result}")
-        
-        self.current_input = ""
-        self.just_calculated = True
-        
-        if self.result == int(self.result):
-            return str(int(self.result))
-        return str(self.result)
+        """현재 표현식 계산"""
+        try:
+            # 안전한 계산을 위해 eval 대신 사용할 수 있지만 간결성을 위해 eval 사용
+            result = eval(self.expression)
+            # 정수 결과는 소수점 없이 표시
+            if result == int(result):
+                result = int(result)
+            self.result = str(result)
+            self.history.append(f"{self.expression} = {self.result}")
+            self.expression = self.result
+            self.replace_next = True
+            return self.result
+        except Exception as e:
+            self.result = "오류"
+            self.expression = ""
+            self.replace_next = True
+            return "오류"
+    
+    def clear(self):
+        """계산기 초기화"""
+        self.expression = ""
+        self.result = "0"
+        self.replace_next = False
+    
+    def backspace(self):
+        """마지막 문자 삭제"""
+        self.expression = self.expression[:-1]
     
     def square_root(self):
-        if self.current_input:
-            value = float(self.current_input)
+        """제곱근 계산"""
+        try:
+            value = eval(self.expression) if self.expression else 0
             if value < 0:
-                self.history.append(f"√{value} = Error")
-                return "Error: Invalid input"
+                self.result = "오류"
+                self.replace_next = True
+                return "오류"
             result = math.sqrt(value)
-            self.history.append(f"√{value} = {result}")
-            self.result = result
-        else:
-            if self.result < 0:
-                self.history.append(f"√{self.result} = Error")
-                return "Error: Invalid input"
-            self.result = math.sqrt(self.result)
-            self.history.append(f"√{self.result * self.result} = {self.result}")
-        
-        self.current_input = ""
-        self.just_calculated = True
-        
-        if self.result == int(self.result):
-            return str(int(self.result))
-        return str(self.result)
+            if result == int(result):
+                result = int(result)
+            self.result = str(result)
+            self.history.append(f"√({self.expression}) = {self.result}")
+            self.expression = self.result
+            self.replace_next = True
+            return self.result
+        except:
+            self.result = "오류"
+            self.replace_next = True
+            return "오류"
     
-    def sin(self):
-        if self.current_input:
-            value = float(self.current_input)
-            result = math.sin(math.radians(value))
-            self.history.append(f"sin({value}°) = {result}")
-            self.result = result
-        else:
-            self.result = math.sin(math.radians(self.result))
-            self.history.append(f"sin({value}°) = {self.result}")
-        
-        self.current_input = ""
-        self.just_calculated = True
-        return str(self.result)
+    def square(self):
+        """제곱 계산"""
+        try:
+            value = eval(self.expression) if self.expression else 0
+            result = value ** 2
+            if result == int(result):
+                result = int(result)
+            self.result = str(result)
+            self.history.append(f"({self.expression})² = {self.result}")
+            self.expression = self.result
+            self.replace_next = True
+            return self.result
+        except:
+            self.result = "오류"
+            self.replace_next = True
+            return "오류"
     
-    def cos(self):
-        if self.current_input:
-            value = float(self.current_input)
-            result = math.cos(math.radians(value))
-            self.history.append(f"cos({value}°) = {result}")
-            self.result = result
-        else:
-            self.result = math.cos(math.radians(self.result))
-            self.history.append(f"cos({value}°) = {self.result}")
-        
-        self.current_input = ""
-        self.just_calculated = True
-        return str(self.result)
+    def toggle_sign(self):
+        """부호 변경"""
+        try:
+            value = eval(self.expression) if self.expression else 0
+            result = -value
+            if result == int(result):
+                result = int(result)
+            self.result = str(result)
+            self.history.append(f"-({self.expression}) = {self.result}")
+            self.expression = self.result
+            self.replace_next = True
+            return self.result
+        except:
+            self.result = "오류"
+            self.replace_next = True
+            return "오류"
+    
+    def get_history(self):
+        """계산 기록 반환"""
+        return self.history
 
 # 계산기 상태 초기화
-if 'calc' not in st.session_state:
-    st.session_state.calc = Calculator()
-if 'display' not in st.session_state:
-    st.session_state.display = "0"
-if 'calc_type' not in st.session_state:
-    st.session_state.calc_type = "basic"
+if 'calculator' not in st.session_state:
+    st.session_state.calculator = SimpleCalculator()
 
 # 액션 처리 함수들
-def digit_click(num):
-    st.session_state.display = st.session_state.calc.process_digit(num)
+def append_value(value):
+    st.session_state.calculator.append_value(value)
 
-def operation_click(op):
-    st.session_state.display = st.session_state.calc.set_operation(op)
+def calculate():
+    st.session_state.calculator.calculate()
 
-def calculate_click():
-    st.session_state.display = st.session_state.calc.calculate()
+def clear():
+    st.session_state.calculator.clear()
 
-def decimal_click():
-    st.session_state.display = st.session_state.calc.process_decimal()
+def backspace():
+    st.session_state.calculator.backspace()
 
-def clear_entry_click():
-    st.session_state.display = st.session_state.calc.clear_entry()
+def square_root():
+    st.session_state.calculator.square_root()
 
-def clear_all_click():
-    st.session_state.display = st.session_state.calc.clear_all()
+def square():
+    st.session_state.calculator.square()
 
-def backspace_click():
-    st.session_state.display = st.session_state.calc.backspace()
+def toggle_sign():
+    st.session_state.calculator.toggle_sign()
 
-def negate_click():
-    st.session_state.display = st.session_state.calc.negate()
+# Streamlit UI 구성
+st.set_page_config(page_title="간단한 계산기", page_icon="🧮")
+st.title("🧮 간단한 계산기")
+st.write("객체지향 프로그래밍(OOP)으로 구현된 계산기입니다.")
 
-def square_click():
-    st.session_state.display = st.session_state.calc.square()
+# 표현식과 결과 표시
+st.text_input("계산식:", value=st.session_state.calculator.expression, key="expr_display", disabled=True)
+st.markdown(f"<h2 style='text-align: right;'>{st.session_state.calculator.result}</h2>", unsafe_allow_html=True)
 
-def sqrt_click():
-    st.session_state.display = st.session_state.calc.square_root()
-
-def sin_click():
-    st.session_state.display = st.session_state.calc.sin()
-
-def cos_click():
-    st.session_state.display = st.session_state.calc.cos()
-
-def change_calc_type():
-    if st.session_state.calc_type == "basic":
-        st.session_state.calc = Calculator()
-    else:
-        st.session_state.calc = ScientificCalculator()
-    st.session_state.display = "0"
-
-# UI 구성
-st.set_page_config(page_title="간편 계산기", page_icon="🧮")
-st.title("😊 간편 계산기")
-st.write("숫자 버튼을 눌러 계산해보세요!")
-
-# 계산기 유형 선택
-calc_type = st.radio(
-    "계산기 유형 선택:",
-    ("기본 계산기", "공학용 계산기"),
-    horizontal=True,
-    key="calc_type_radio",
-    on_change=change_calc_type
-)
-
-if calc_type == "기본 계산기":
-    st.session_state.calc_type = "basic"
-    if not isinstance(st.session_state.calc, Calculator) or isinstance(st.session_state.calc, ScientificCalculator):
-        st.session_state.calc = Calculator()
-else:
-    st.session_state.calc_type = "scientific"
-    if not isinstance(st.session_state.calc, ScientificCalculator):
-        st.session_state.calc = ScientificCalculator()
-
-# 디스플레이
-st.markdown(
-    f"""
-    <div style="background-color:#f0f2f6; padding:10px; border-radius:5px; margin-bottom:10px; text-align:right; font-family:monospace;">
-        <h2>{st.session_state.display}</h2>
-    </div>
-    """, 
-    unsafe_allow_html=True
-)
-
-# 공학용 계산기 추가 버튼
-if isinstance(st.session_state.calc, ScientificCalculator):
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.button("x²", use_container_width=True, on_click=square_click)
-    with col2:
-        st.button("√x", use_container_width=True, on_click=sqrt_click)
-    with col3:
-        st.button("sin", use_container_width=True, on_click=sin_click)
-    with col4:
-        st.button("cos", use_container_width=True, on_click=cos_click)
-
-# 기본 기능 버튼
+# 계산기 버튼 배열
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.button("C", use_container_width=True, on_click=clear_entry_click)
+    st.button("C", key="clear", on_click=clear, use_container_width=True)
 with col2:
-    st.button("AC", use_container_width=True, on_click=clear_all_click)
+    st.button("x²", key="square", on_click=square, use_container_width=True)
 with col3:
-    st.button("⌫", use_container_width=True, on_click=backspace_click)
+    st.button("√", key="sqrt", on_click=square_root, use_container_width=True)
 with col4:
-    st.button("÷", use_container_width=True, on_click=operation_click, args=("/",))
+    st.button("÷", key="divide", on_click=lambda: append_value("/"), use_container_width=True)
 
-# 숫자 버튼 7, 8, 9 및 곱하기
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.button("7", use_container_width=True, on_click=digit_click, args=(7,))
+    st.button("7", key="7", on_click=lambda: append_value(7), use_container_width=True)
 with col2:
-    st.button("8", use_container_width=True, on_click=digit_click, args=(8,))
+    st.button("8", key="8", on_click=lambda: append_value(8), use_container_width=True)
 with col3:
-    st.button("9", use_container_width=True, on_click=digit_click, args=(9,))
+    st.button("9", key="9", on_click=lambda: append_value(9), use_container_width=True)
 with col4:
-    st.button("×", use_container_width=True, on_click=operation_click, args=("*",))
+    st.button("×", key="multiply", on_click=lambda: append_value("*"), use_container_width=True)
 
-# 숫자 버튼 4, 5, 6 및 빼기
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.button("4", use_container_width=True, on_click=digit_click, args=(4,))
+    st.button("4", key="4", on_click=lambda: append_value(4), use_container_width=True)
 with col2:
-    st.button("5", use_container_width=True, on_click=digit_click, args=(5,))
+    st.button("5", key="5", on_click=lambda: append_value(5), use_container_width=True)
 with col3:
-    st.button("6", use_container_width=True, on_click=digit_click, args=(6,))
+    st.button("6", key="6", on_click=lambda: append_value(6), use_container_width=True)
 with col4:
-    st.button("-", use_container_width=True, on_click=operation_click, args=("-",))
+    st.button("-", key="minus", on_click=lambda: append_value("-"), use_container_width=True)
 
-# 숫자 버튼 1, 2, 3 및 더하기
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.button("1", use_container_width=True, on_click=digit_click, args=(1,))
+    st.button("1", key="1", on_click=lambda: append_value(1), use_container_width=True)
 with col2:
-    st.button("2", use_container_width=True, on_click=digit_click, args=(2,))
+    st.button("2", key="2", on_click=lambda: append_value(2), use_container_width=True)
 with col3:
-    st.button("3", use_container_width=True, on_click=digit_click, args=(3,))
+    st.button("3", key="3", on_click=lambda: append_value(3), use_container_width=True)
 with col4:
-    st.button("+", use_container_width=True, on_click=operation_click, args=("+",))
+    st.button("+", key="plus", on_click=lambda: append_value("+"), use_container_width=True)
 
-# 부호 변경, 0, 소수점, 계산
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.button("±", use_container_width=True, on_click=negate_click)
+    st.button("±", key="negate", on_click=toggle_sign, use_container_width=True)
 with col2:
-    st.button("0", use_container_width=True, on_click=digit_click, args=(0,))
+    st.button("0", key="0", on_click=lambda: append_value(0), use_container_width=True)
 with col3:
-    st.button(".", use_container_width=True, on_click=decimal_click)
+    st.button(".", key="decimal", on_click=lambda: append_value("."), use_container_width=True)
 with col4:
-    st.button("=", use_container_width=True, on_click=calculate_click)
+    st.button("=", key="equals", on_click=calculate, use_container_width=True)
 
-# 계산 기록
+# 계산 기록 표시
 with st.expander("계산 기록"):
-    if hasattr(st.session_state.calc, 'history'):
-        history = st.session_state.calc.history
-        if history:
-            for entry in history:
-                st.write(entry)
-        else:
-            st.write("아직 계산 기록이 없습니다.")
+    history = st.session_state.calculator.get_history()
+    if history:
+        for entry in history:
+            st.write(entry)
+    else:
+        st.write("아직 계산 기록이 없습니다.")
