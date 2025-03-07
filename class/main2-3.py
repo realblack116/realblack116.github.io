@@ -1,3 +1,4 @@
+### 컴퓨터의 외부 및 내부 IP 확인 ###
 import requests  # 웹 요청을 보내기 위한 requests 모듈을 불러온다.
 import re        # 정규표현식 사용을 위한 re 모듈을 불러온다.
 
