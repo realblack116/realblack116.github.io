@@ -1,4 +1,4 @@
-<h1> class1 숫자 맞추기 게임 만들기 </h1>
+print("<h1>class1 숫자 맞추기 게임 만들기</h1>")
 main1-1.py
 import random  # random 모듈을 불러와서 난수 생성 기능을 사용할 수 있게 한다.
 
@@ -8,7 +8,7 @@ random_number = random.randint(1, 100)
 # 생성된 무작위 정수를 출력한다.
 print(random_number)
 
-<h1> 코드 설명 </h1>
+print("<h1> 코드 설명 </h1>")
 1. import random
 - 파이썬의 내장 모듈인 random을 가져와서 난수 생성 관련 함수를 사용할 수 있게 한다.
 
