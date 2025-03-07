@@ -1,5 +1,6 @@
+### class1 숫자 맞추기 게임 만들기 ###
 main1-3.py
-import random  # 난수 생성 기능을 제공하는 random 모듈을 가져온다다.
+import random  # 난수 생성 기능을 제공하는 random 모듈을 가져온다.
 
 # 1부터 100 사이의 임의의 정수를 생성하여 random_number 변수에 저장한다.
 random_number = random.randint(1, 100)
@@ -32,7 +33,7 @@ while True:
         # 숫자가 아닌 값 등을 입력하여 변환 오류가 발생하면 예외 처리하여 에러 메시지를 출력한다.
         print("에러가 발생하였습니다. 숫자를 입력하세요")
 
-코드 설명
+### 코드 설명 ###
 1. 난수 생성 및 변수 초기화:
 - random.randint(1, 100) 함수를 사용해 1부터 100 사이의 임의의 정수를 생성하고,
   이를 random_number에 저장한다. 또한, game_count 변수를 1로 초기화하여 사용자의 시도 횟수를 추적한다.
