@@ -1,3 +1,4 @@
+### 컴퓨터의 외부 및 내부 IP 확인 ###
 import socket  # 네트워크 소켓 통신을 위한 내장 socket 모듈을 불러온다.
 
 # IPv4(AF_INET)와 TCP(SOCK_STREAM)를 사용하는 소켓 객체를 생성.
