@@ -1,4 +1,4 @@
-# calculator_app.py
+# calculator_app_improved.py
 import streamlit as st
 import math
 
@@ -8,43 +8,93 @@ class Calculator:
     def __init__(self, name="기본 계산기"):
         self.name = name
         self.result = 0
+        self.current_input = ""
+        self.operation = None
         self.history = []
+        self.just_calculated = False
     
-    def add(self, num):
-        """덧셈 연산"""
-        self.result += num
-        self._add_to_history(f"+ {num}")
-        return self.result
+    def digit(self, num):
+        """숫자 버튼 입력"""
+        if self.just_calculated:
+            self.current_input = str(num)
+            self.just_calculated = False
+        else:
+            self.current_input += str(num)
+        return self.current_input
     
-    def subtract(self, num):
-        """뺄셈 연산"""
-        self.result -= num
-        self._add_to_history(f"- {num}")
-        return self.result
+    def decimal(self):
+        """소수점 입력"""
+        if "." not in self.current_input:
+            if self.current_input == "":
+                self.current_input = "0."
+            else:
+                self.current_input += "."
+        return self.current_input
     
-    def multiply(self, num):
-        """곱셈 연산"""
-        self.result *= num
-        self._add_to_history(f"× {num}")
-        return self.result
+    def clear_entry(self):
+        """현재 입력 지우기"""
+        self.current_input = ""
+        return self.current_input
     
-    def divide(self, num):
-        """나눗셈 연산"""
-        if num == 0:
-            self._add_to_history("÷ 0 (오류: 0으로 나눌 수 없음)")
-            return "오류: 0으로 나눌 수 없습니다"
-        self.result /= num
-        self._add_to_history(f"÷ {num}")
-        return self.result
-    
-    def clear(self):
-        """결과 초기화"""
+    def clear_all(self):
+        """모두 지우기"""
         self.result = 0
-        self._add_to_history("초기화")
-        return self.result
+        self.current_input = ""
+        self.operation = None
+        self._add_to_history("모두 지우기")
+        return "0"
+    
+    def backspace(self):
+        """마지막 문자 지우기"""
+        if self.current_input:
+            self.current_input = self.current_input[:-1]
+        return self.current_input or "0"
+    
+    def set_operation(self, op):
+        """연산 설정"""
+        if self.current_input:
+            if self.operation and not self.just_calculated:
+                self.calculate()
+            else:
+                self.result = float(self.current_input)
+            self.operation = op
+            self.current_input = ""
+            self.just_calculated = False
+        elif self.result != 0:
+            self.operation = op
+        return str(self.result)
+    
+    def calculate(self):
+        """계산 실행"""
+        if not self.current_input and not self.just_calculated:
+            return str(self.result)
+            
+        if not self.just_calculated:
+            current_value = float(self.current_input)
+            if self.operation == "+":
+                self.result += current_value
+                self._add_to_history(f"{self.result - current_value} + {current_value}")
+            elif self.operation == "-":
+                self.result -= current_value
+                self._add_to_history(f"{self.result + current_value} - {current_value}")
+            elif self.operation == "*":
+                self.result *= current_value
+                self._add_to_history(f"{self.result / current_value} × {current_value}")
+            elif self.operation == "/":
+                if current_value == 0:
+                    self._add_to_history(f"{self.result} ÷ 0 (오류)")
+                    return "오류: 0으로 나눌 수 없습니다"
+                self.result /= current_value
+                self._add_to_history(f"{self.result * current_value} ÷ {current_value}")
+            else:
+                self.result = float(self.current_input)
+                
+        self.current_input = ""
+        self.just_calculated = True
+        return str(self.result)
     
     def _add_to_history(self, operation):
-        """계산 기록 추가 (내부 메서드)"""
+        """계산 기록 추가"""
         self.history.append(f"{operation} = {self.result}")
     
     def get_history(self):
@@ -57,67 +107,80 @@ class ScientificCalculator(Calculator):
     def __init__(self):
         super().__init__("공학용 계산기")
     
-    def power(self, num):
-        """거듭제곱 연산"""
-        self.result **= num
-        self._add_to_history(f"^ {num}")
-        return self.result
+    def square(self):
+        """제곱 계산"""
+        if self.current_input:
+            value = float(self.current_input)
+            result = value ** 2
+            self._add_to_history(f"{value}²")
+            self.result = result
+            self.current_input = ""
+            self.just_calculated = True
+        else:
+            self.result = self.result ** 2
+            self._add_to_history(f"{self.result}²")
+        return str(self.result)
     
     def square_root(self):
-        """제곱근 연산"""
-        if self.result < 0:
-            self._add_to_history("√ (오류: 음수의 제곱근)")
-            return "오류: 음수의 제곱근을 계산할 수 없습니다"
-        self.result = self.result ** 0.5
-        self._add_to_history("√")
-        return self.result
+        """제곱근 계산"""
+        if self.current_input:
+            value = float(self.current_input)
+            if value < 0:
+                self._add_to_history(f"√{value} (오류)")
+                return "오류: 음수의 제곱근"
+            result = math.sqrt(value)
+            self._add_to_history(f"√{value}")
+            self.result = result
+            self.current_input = ""
+            self.just_calculated = True
+        else:
+            if self.result < 0:
+                self._add_to_history(f"√{self.result} (오류)")
+                return "오류: 음수의 제곱근"
+            self.result = math.sqrt(self.result)
+            self._add_to_history(f"√{self.result}")
+        return str(self.result)
     
     def sin(self):
-        """사인 연산"""
-        self.result = math.sin(math.radians(self.result))
-        self._add_to_history("sin")
-        return self.result
+        """사인 계산"""
+        if self.current_input:
+            value = float(self.current_input)
+            result = math.sin(math.radians(value))
+            self._add_to_history(f"sin({value}°)")
+            self.result = result
+            self.current_input = ""
+            self.just_calculated = True
+        else:
+            self.result = math.sin(math.radians(self.result))
+            self._add_to_history(f"sin({self.result}°)")
+        return str(self.result)
     
     def cos(self):
-        """코사인 연산"""
-        self.result = math.cos(math.radians(self.result))
-        self._add_to_history("cos")
-        return self.result
-    
-    def tan(self):
-        """탄젠트 연산"""
-        self.result = math.tan(math.radians(self.result))
-        self._add_to_history("tan")
-        return self.result
-    
-    def log10(self):
-        """로그(밑수 10) 연산"""
-        if self.result <= 0:
-            self._add_to_history("log (오류: 0이하의 수의 로그)")
-            return "오류: 0 이하의 수의 로그를 계산할 수 없습니다"
-        self.result = math.log10(self.result)
-        self._add_to_history("log")
-        return self.result
+        """코사인 계산"""
+        if self.current_input:
+            value = float(self.current_input)
+            result = math.cos(math.radians(value))
+            self._add_to_history(f"cos({value}°)")
+            self.result = result
+            self.current_input = ""
+            self.just_calculated = True
+        else:
+            self.result = math.cos(math.radians(self.result))
+            self._add_to_history(f"cos({self.result}°)")
+        return str(self.result)
 
 
-# Streamlit 앱 인터페이스
-def main():
-    st.set_page_config(page_title="객체지향 계산기 앱", page_icon="🧮")
-    
-    st.title("객체지향 계산기 애플리케이션")
-    
-    # 세션 상태 초기화
+# 계산기 UI 함수
+def create_calculator_ui():
     if 'calculator' not in st.session_state:
-        st.session_state.calculator = None
+        st.session_state.calculator = Calculator()
     if 'display' not in st.session_state:
         st.session_state.display = "0"
-    if 'need_clear' not in st.session_state:
-        st.session_state.need_clear = False
     
-    # 계산기 유형 선택
     calc_type = st.radio(
         "계산기 유형 선택:",
-        ("기본 계산기", "공학용 계산기")
+        ("기본 계산기", "공학용 계산기"),
+        horizontal=True
     )
     
     if calc_type == "기본 계산기" and not isinstance(st.session_state.calculator, Calculator):
@@ -129,89 +192,150 @@ def main():
     
     calculator = st.session_state.calculator
     
-    # 현재 결과 표시
-    st.subheader(f"현재 결과:")
-    result_display = st.empty()
-    result_display.markdown(f"## {st.session_state.display}")
+    # 현재 입력 표시
+    st.markdown(
+        f"""
+        <div style="background-color:#f0f2f6; padding:10px; border-radius:5px; margin-bottom:10px; text-align:right; font-family:monospace;">
+            <h2>{st.session_state.display}</h2>
+        </div>
+        """, 
+        unsafe_allow_html=True
+    )
     
-    # 숫자 입력
-    num_input = st.number_input("숫자 입력:", value=0.0, key="num_input")
-    
-    # 기본 연산 버튼들
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("더하기 (+)"):
-            calculator.add(num_input)
-            st.session_state.display = str(calculator.result)
-    
-    with col2:
-        if st.button("빼기 (-)"):
-            calculator.subtract(num_input)
-            st.session_state.display = str(calculator.result)
-    
-    with col3:
-        if st.button("곱하기 (×)"):
-            calculator.multiply(num_input)
-            st.session_state.display = str(calculator.result)
-    
-    with col4:
-        if st.button("나누기 (÷)"):
-            result = calculator.divide(num_input)
-            st.session_state.display = str(result)
-    
-    # 초기화 버튼
-    if st.button("초기화 (C)"):
-        calculator.clear()
-        st.session_state.display = "0"
-    
-    # 공학용 계산기 기능
+    # 공학용 계산기 추가 버튼
     if isinstance(calculator, ScientificCalculator):
-        st.subheader("공학용 계산기 기능")
-        
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            if st.button("거듭제곱 (^)"):
-                calculator.power(num_input)
-                st.session_state.display = str(calculator.result)
+            if st.button("x²", use_container_width=True):
+                st.session_state.display = calculator.square()
         
         with col2:
-            if st.button("제곱근 (√)"):
-                result = calculator.square_root()
-                st.session_state.display = str(result)
+            if st.button("√x", use_container_width=True):
+                st.session_state.display = calculator.square_root()
         
         with col3:
-            if st.button("사인 (sin)"):
-                calculator.sin()
-                st.session_state.display = str(calculator.result)
+            if st.button("sin", use_container_width=True):
+                st.session_state.display = calculator.sin()
         
         with col4:
-            if st.button("코사인 (cos)"):
-                calculator.cos()
-                st.session_state.display = str(calculator.result)
-        
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if st.button("탄젠트 (tan)"):
-                calculator.tan()
-                st.session_state.display = str(calculator.result)
-        
-        with col2:
-            if st.button("로그 (log10)"):
-                result = calculator.log10()
-                st.session_state.display = str(result)
+            if st.button("cos", use_container_width=True):
+                st.session_state.display = calculator.cos()
     
-    # 계산 기록 표시
-    st.subheader("계산 기록")
-    history = calculator.get_history()
+    # 기본 기능 버튼 (모든 계산기 공통)
+    col1, col2, col3, col4 = st.columns(4)
     
-    if history:
-        for entry in history:
-            st.text(entry)
-    else:
-        st.text("아직 계산 기록이 없습니다.")
+    with col1:
+        if st.button("C", use_container_width=True):
+            st.session_state.display = calculator.clear_entry()
+    
+    with col2:
+        if st.button("AC", use_container_width=True):
+            st.session_state.display = calculator.clear_all()
+    
+    with col3:
+        if st.button("⌫", use_container_width=True):
+            st.session_state.display = calculator.backspace()
+    
+    with col4:
+        if st.button("÷", use_container_width=True):
+            st.session_state.display = calculator.set_operation("/")
+    
+    # 숫자 버튼 및 기본 연산
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("7", use_container_width=True):
+            st.session_state.display = calculator.digit(7)
+    
+    with col2:
+        if st.button("8", use_container_width=True):
+            st.session_state.display = calculator.digit(8)
+    
+    with col3:
+        if st.button("9", use_container_width=True):
+            st.session_state.display = calculator.digit(9)
+    
+    with col4:
+        if st.button("×", use_container_width=True):
+            st.session_state.display = calculator.set_operation("*")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("4", use_container_width=True):
+            st.session_state.display = calculator.digit(4)
+    
+    with col2:
+        if st.button("5", use_container_width=True):
+            st.session_state.display = calculator.digit(5)
+    
+    with col3:
+        if st.button("6", use_container_width=True):
+            st.session_state.display = calculator.digit(6)
+    
+    with col4:
+        if st.button("-", use_container_width=True):
+            st.session_state.display = calculator.set_operation("-")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("1", use_container_width=True):
+            st.session_state.display = calculator.digit(1)
+    
+    with col2:
+        if st.button("2", use_container_width=True):
+            st.session_state.display = calculator.digit(2)
+    
+    with col3:
+        if st.button("3", use_container_width=True):
+            st.session_state.display = calculator.digit(3)
+    
+    with col4:
+        if st.button("+", use_container_width=True):
+            st.session_state.display = calculator.set_operation("+")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("±", use_container_width=True):
+            if calculator.current_input and calculator.current_input != "0":
+                if calculator.current_input[0] == "-":
+                    calculator.current_input = calculator.current_input[1:]
+                else:
+                    calculator.current_input = "-" + calculator.current_input
+                st.session_state.display = calculator.current_input
+    
+    with col2:
+        if st.button("0", use_container_width=True):
+            st.session_state.display = calculator.digit(0)
+    
+    with col3:
+        if st.button(".", use_container_width=True):
+            st.session_state.display = calculator.decimal()
+    
+    with col4:
+        if st.button("=", use_container_width=True):
+            st.session_state.display = calculator.calculate()
+    
+    # 계산 기록
+    with st.expander("계산 기록"):
+        history = calculator.get_history()
+        if history:
+            for entry in history:
+                st.write(entry)
+        else:
+            st.write("아직 계산 기록이 없습니다.")
+
+
+def main():
+    st.set_page_config(page_title="간편 계산기", page_icon="🧮")
+    
+    st.title("😊 간편 계산기")
+    st.write("숫자 버튼을 눌러 계산해보세요!")
+    
+    create_calculator_ui()
 
 
 if __name__ == "__main__":
