@@ -1,4 +1,3 @@
-```python
 import os
 import yt_dlp
 from PyQt5.QtCore import QObject, pyqtSignal
@@ -103,4 +102,3 @@ class DownloadWorker(QObject):
                 self.ydl.interrupt()
             except:
                 pass
-```
