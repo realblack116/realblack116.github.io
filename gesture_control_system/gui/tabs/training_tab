@@ -1,0 +1,98 @@
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
+                              QGroupBox, QListWidget, QPushButton, QProgressBar,
+                              QMessageBox, QInputDialog)
+
+class TrainingTab(QWidget):
+    def __init__(self, parent, gesture_thread):
+        super().__init__()
+        self.parent = parent
+        self.gesture_thread = gesture_thread
+        self.setup_ui()
+    
+    def setup_ui(self):
+        layout = QVBoxLayout()
+        instruction_label = QLabel("새로운 제스처를 학습하려면 아래 버튼을 클릭하세요.")
+        layout.addWidget(instruction_label)
+        gestures_group = QGroupBox("학습된 제스처")
+        gestures_layout = QVBoxLayout()
+        self.gestures_list = QListWidget()
+        self.update_gestures_list()
+        gestures_layout.addWidget(self.gestures_list)
+        buttons_layout = QHBoxLayout()
+        self.add_gesture_button = QPushButton("제스처 추가")
+        self.add_gesture_button.clicked.connect(self.add_new_gesture)
+        buttons_layout.addWidget(self.add_gesture_button)
+        self.delete_gesture_button = QPushButton("제스처 삭제")
+        self.delete_gesture_button.clicked.connect(self.delete_gesture)
+        buttons_layout.addWidget(self.delete_gesture_button)
+        gestures_layout.addLayout(buttons_layout)
+        gestures_group.setLayout(gestures_layout)
+        layout.addWidget(gestures_group)
+        training_group = QGroupBox("학습 진행 상황")
+        training_layout = QVBoxLayout()
+        self.training_progress = QProgressBar()
+        self.training_progress.setRange(0, 100)
+        self.training_progress.setValue(0)
+        training_layout.addWidget(self.training_progress)
+        self.training_status = QLabel("준비됨")
+        training_layout.addWidget(self.training_status)
+        training_group.setLayout(training_layout)
+        layout.addWidget(training_group)
+        self.setLayout(layout)
+    
+    def update_gestures_list(self):
+        self.gestures_list.clear()
+        self.gestures_list.addItem("Up (기본)")
+        self.gestures_list.addItem("Down (기본)")
+        self.gestures_list.addItem("Left (기본)")
+        self.gestures_list.addItem("Right (기본)")
+        for gesture_name in self.gesture_thread.gestures_db.keys():
+            if gesture_name not in ["Up", "Down", "Left", "Right"]:
+                self.gestures_list.addItem(gesture_name)
+    
+    def add_new_gesture(self):
+        gesture_name, ok = QInputDialog.getText(
+            self, "새 제스처", "제스처 이름을 입력하세요:"
+        )
+        if ok and gesture_name:
+            if gesture_name in self.gesture_thread.gestures_db or gesture_name in ["Up", "Down", "Left", "Right"]:
+                QMessageBox.warning(self, "중복 이름", "이미 존재하는 제스처 이름입니다.")
+                return
+            self.parent.log_status(f"'{gesture_name}' 제스처 학습을 시작합니다. 제스처를 수행하세요...")
+            self.parent.tabs.setCurrentIndex(0)
+            self.gesture_thread.set_mode("training")
+            self.gesture_thread.start_gesture_recording(gesture_name)
+            if not self.gesture_thread.isRunning():
+                self.parent.main_tab.start_detection()
+    
+    def delete_gesture(self):
+        selected_items = self.gestures_list.selectedItems()
+        if not selected_items:
+            QMessageBox.information(self, "선택 없음", "삭제할 제스처를 선택하세요.")
+            return
+        gesture_text = selected_items[0].text()
+        if "(기본)" in gesture_text:
+            QMessageBox.warning(self, "삭제 불가", "기본 제스처는 삭제할 수 없습니다.")
+            return
+        reply = QMessageBox.question(
+            self, "제스처 삭제", f"'{gesture_text}' 제스처를 삭제하시겠습니까?",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            if gesture_text in self.gesture_thread.gestures_db:
+                del self.gesture_thread.gestures_db[gesture_text]
+                self.gesture_thread.save_gestures_database()
+                self.parent.log_status(f"'{gesture_text}' 제스처가 삭제되었습니다.")
+                self.update_gestures_list()
+                if hasattr(self.parent, 'mapping_tab'):
+                    self.parent.mapping_tab.update_gesture_mappings()
+    
+    def update_progress(self, current, total):
+        progress = int((current / total) * 100)
+        self.training_progress.setValue(progress)
+        self.training_status.setText(f"학습 중... {current}/{total} 프레임")
+        if current >= total:
+            self.training_status.setText("학습 완료!")
+            self.update_gestures_list()
+            if hasattr(self.parent, 'mapping_tab'):
+                self.parent.mapping_tab.update_gesture_mappings()
