@@ -5,8 +5,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('products.urls')),        # 기존 product용
-    path('cart/', include('orders.urls')),     # ✅ 이 줄 반드시 있어야 함!
+    path('', include('products.urls')),
+    path('cart/', include('orders.urls')),
 ]
 
 if settings.DEBUG:
