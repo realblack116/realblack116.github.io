@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}상품 목록{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4">🛍️ 판매 중인 프로그램 목록</h2>
+
+    {% if products %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for product in products %}
+                {% if product.id %}
+                <div class="col">
+                    <div class="card h-100 border-dark">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text fw-bold text-end">{{ product.price }} 원</p>
+                            <div class="d-grid">
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-dark">
+                                    상세보기
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">등록된 상품이 없습니다.</p>
+    {% endif %}
+</div>
+{% endblock %}

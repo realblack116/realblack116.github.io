@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="fw-bold mb-3">{{ product.title }}</h2>
+    <p>{{ product.description }}</p>
+    <p class="fw-bold">{{ product.price }} 원</p>
+
+    <div class="mt-4">
+        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-dark">장바구니에 담기</a>
+        <a href="{% url 'product_list' %}" class="btn btn-outline">← 목록으로 돌아가기</a>
+    </div>
+
+    {% if product.files.all %}
+        <hr>
+        <h5 class="mt-4">포함된 파일:</h5>
+        <ul>
+            {% for file in product.files.all %}
+                <li>{{ file.file.name|cut:"products/files/" }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+{% endblock %}
