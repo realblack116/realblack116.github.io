@@ -2,8 +2,8 @@ from django.db import models
 from products.models import Product
 
 class Order(models.Model):
-    name = models.CharField(max_length=100)  # 사용자 이름
-    email = models.EmailField()              # 이메일
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
