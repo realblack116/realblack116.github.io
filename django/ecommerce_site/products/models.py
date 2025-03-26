@@ -1,4 +1,4 @@
-from django.db import models  # ✅ 이 줄 반드시 필요!
+from django.db import models
 
 class Product(models.Model):
     title = models.CharField(max_length=200)
